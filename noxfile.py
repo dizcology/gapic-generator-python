@@ -50,7 +50,7 @@ def unit(session):
                 "--cov-report=term",
                 "--cov-report=html",
                 path.join("tests", "unit"),
-            ]
+                            ]
         ),
     )
 
@@ -310,7 +310,7 @@ def snippetgen(session):
 
     session.run(
         "py.test",
-        "--quiet",
+        "-vv",
         "tests/snippetgen"
     )
 
