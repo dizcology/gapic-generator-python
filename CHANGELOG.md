@@ -1,5 +1,52 @@
 # Changelog
 
+## [0.47.0](https://www.github.com/googleapis/gapic-generator-python/compare/v0.46.3...v0.47.0) (2021-05-13)
+
+
+### Features
+
+* support protobuf method deprecation option [gapic-generator-python] ([#875](https://www.github.com/googleapis/gapic-generator-python/issues/875)) ([5a5a839](https://www.github.com/googleapis/gapic-generator-python/commit/5a5a839b99d78ec5a5c52452e57c289b55ad1db5))
+
+### [0.46.3](https://www.github.com/googleapis/gapic-generator-python/compare/v0.46.2...v0.46.3) (2021-05-12)
+
+
+### Bug Fixes
+
+* consistently use _pb2 identifier ([#883](https://www.github.com/googleapis/gapic-generator-python/issues/883)) ([d789c84](https://www.github.com/googleapis/gapic-generator-python/commit/d789c84d0d686bdb2d88179041b4c04cc32a3e66))
+
+### [0.46.2](https://www.github.com/googleapis/gapic-generator-python/compare/v0.46.1...v0.46.2) (2021-05-12)
+
+
+### Bug Fixes
+
+* fix incorrectly referenced exceptions, add missing port to tests ([#873](https://www.github.com/googleapis/gapic-generator-python/issues/873)) ([40078c4](https://www.github.com/googleapis/gapic-generator-python/commit/40078c46b21a0dfa489d4cd80ed7d95bb542f3c3)), closes [#872](https://www.github.com/googleapis/gapic-generator-python/issues/872)
+
+### [0.46.1](https://www.github.com/googleapis/gapic-generator-python/compare/v0.46.0...v0.46.1) (2021-05-07)
+
+
+### Bug Fixes
+
+* also add the async client to __all__ ([#869](https://www.github.com/googleapis/gapic-generator-python/issues/869)) ([09c90fa](https://www.github.com/googleapis/gapic-generator-python/commit/09c90fa48515cb7da1d0ebf1d93a0d49fc6448e8))
+
+## [0.46.0](https://www.github.com/googleapis/gapic-generator-python/compare/v0.45.2...v0.46.0) (2021-05-07)
+
+
+### Features
+
+* Support field presence for query parameters in REST clients ([#866](https://www.github.com/googleapis/gapic-generator-python/issues/866)) ([5339db1](https://www.github.com/googleapis/gapic-generator-python/commit/5339db1308326d91a05a34d38e31cf91b79a9225))
+
+
+### Bug Fixes
+
+* Check for default value presence for non-optional fields in REST ([#868](https://www.github.com/googleapis/gapic-generator-python/issues/868)) ([5748001](https://www.github.com/googleapis/gapic-generator-python/commit/57480019c3e77c6b3a85bdaf8441334170b318e8))
+
+### [0.45.2](https://www.github.com/googleapis/gapic-generator-python/compare/v0.45.1...v0.45.2) (2021-05-06)
+
+
+### Bug Fixes
+
+* remove extra space before_pb_options ([#863](https://www.github.com/googleapis/gapic-generator-python/issues/863)) ([f0532e7](https://www.github.com/googleapis/gapic-generator-python/commit/f0532e7a88479aeb805c1509239008bdd19e9d85))
+
 ### [0.45.1](https://www.github.com/googleapis/gapic-generator-python/compare/v0.45.0...v0.45.1) (2021-05-04)
 
 

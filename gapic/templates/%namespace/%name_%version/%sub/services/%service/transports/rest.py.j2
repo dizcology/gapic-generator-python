@@ -9,8 +9,9 @@ from typing import Callable, Dict, Optional, Sequence, Tuple
 from google.api_core import operations_v1
 {% endif %}
 from google.api_core import gapic_v1       # type: ignore
-from google.auth import credentials as ga_credentials  # type: ignore
-from google.auth.transport.grpc import SslCredentials  # type: ignore
+from google.api_core import exceptions as core_exceptions  # type: ignore
+from google.auth import credentials as ga_credentials      # type: ignore
+from google.auth.transport.grpc import SslCredentials      # type: ignore
 
 import grpc  # type: ignore
 
@@ -89,7 +90,7 @@ class {{ service.name }}RestTransport({{ service.name }}Transport):
             client_info=client_info,
         )
         self._session = AuthorizedSession(self._credentials, default_host=self.DEFAULT_HOST)
-        {%- if service.has_lro %}
+        {% if service.has_lro %}
         self._operations_client = None
         {% endif %}
         if client_cert_source_for_mtls:
@@ -109,13 +110,13 @@ class {{ service.name }}RestTransport({{ service.name }}Transport):
         if self._operations_client is None:
             from google.api_core import grpc_helpers
 
-            self_signed_jwt_kwargs = cls._get_self_signed_jwt_kwargs(self._host, self._scopes)
-
             self._operations_client = operations_v1.OperationsClient(
                 grpc_helpers.create_channel(
                     self._host,
                     credentials=self._credentials,
-                    **self_signed_jwt_kwargs,
+                    default_scopes=cls.AUTH_SCOPES,
+                    scopes=self._scopes,
+                    default_host=cls.DEFAULT_HOST,
                     options=[
                         ("grpc.max_send_message_length", -1),
                         ("grpc.max_receive_message_length", -1),
@@ -133,10 +134,10 @@ class {{ service.name }}RestTransport({{ service.name }}Transport):
             request: {{ method.input.ident }}, *,
             metadata: Sequence[Tuple[str, str]] = (),
             ) -> {{ method.output.ident }}:
-        r"""Call the {{ ' ' }}
+        r"""Call the {{- ' ' -}}
         {{ (method.name|snake_case).replace('_',' ')|wrap(
                 width=70, offset=45, indent=8) }}
-        {{ ' ' }} method over HTTP.
+        {{- ' ' -}} method over HTTP.
 
         Args:
             request (~.{{ method.input.ident }}):
@@ -189,27 +190,38 @@ class {{ service.name }}RestTransport({{ service.name }}Transport):
         #}
         # TODO(yon-mg): handle nested fields corerctly rather than using only top level fields
         #               not required for GCE
-        query_params = {
-            {% for field in method.query_params | sort%}
-            '{{ field|camel_case }}': request.{{ field }},
-            {% endfor %}
-        }
+        query_params = {}
+        {% for field in method.query_params | sort%}
+        {% if method.input.fields[field].proto3_optional %}
+        if {{ method.input.ident }}.{{ field }} in request:
+            query_params['{{ field|camel_case }}'] = request.{{ field }}
+        {% else %}
+        if request.{{ field }}:
+            query_params['{{ field|camel_case }}'] = request.{{ field }}
+        {% endif %}
+        {% endfor %}
+
         # TODO(yon-mg): further discussion needed whether 'python truthiness' is appropriate here
         #               discards default values
         # TODO(yon-mg): add test for proper url encoded strings
-        query_params = ['{k}={v}'.format(k=k, v=v) for k, v in query_params.items() if v]
+        query_params = ['{k}={v}'.format(k=k, v=v) for k, v in query_params.items()]
         url += '?{}'.format('&'.join(query_params)).replace(' ', '+')
 
         # Send the request
-        {% if not method.void %}response = {% endif %}self._session.{{ method.http_opt['verb'] }}(
-            url
-            {% if 'body' in method.http_opt %},
+        headers = dict(metadata)
+        headers['Content-Type'] = 'application/json'
+        response = self._session.{{ method.http_opt['verb'] }}(
+            url,
+            headers=headers,
+            {% if 'body' in method.http_opt %}
             data=body,
             {% endif %}
         )
 
-        # Raise requests.exceptions.HTTPError if the status code is >= 400
-        response.raise_for_status()
+        # In case of error, raise the appropriate core_exceptions.GoogleAPICallError exception
+        # subclass.
+        if response.status_code >= 400:
+            raise core_exceptions.from_http_response(response)
         {% if not method.void %}
 
         # Return the response
